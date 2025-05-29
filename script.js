@@ -4,7 +4,7 @@
 
 // Configuración global
 const CONFIG = {
-    EMAIL_SERVICE: 'https://formspree.io/f/YOUR_FORM_ID', // Reemplazar con tu ID de Formspree
+    EMAIL_SERVICE: 'https://formspree.io/f/YOUR_FORM_ID',
     ANIMATION_DURATION: 300,
     DEBOUNCE_DELAY: 100,
     TESTIMONIAL_INTERVAL: 5000
@@ -15,9 +15,9 @@ const CONFIG = {
 // =================================================================
 
 const EMAIL_CONFIG = {
-    SERVICE_ID: 'service_g50s2sv', // ✅ Tu Service ID
-    TEMPLATE_ID: 'template_0fc49do', // ✅ Tu Template ID
-    PUBLIC_KEY: 'TU_PUBLIC_KEY_AQUI' // 🔄 Reemplaza con tu Public Key
+    SERVICE_ID: 'service_g50s2sv',
+    TEMPLATE_ID: 'template_0fc49do',
+    PUBLIC_KEY: '-avaKSi0GQ1MQ2I-4'
 };
 
 // Inicializar EmailJS
@@ -27,7 +27,6 @@ emailjs.init(EMAIL_CONFIG.PUBLIC_KEY);
 // UTILIDADES GENERALES
 // =================================================================
 
-// Función de debounce para optimizar performance
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -40,7 +39,6 @@ function debounce(func, wait) {
     };
 }
 
-// Función para hacer smooth scroll
 function smoothScrollTo(element, offset = 80) {
     const elementPosition = element.offsetTop - offset;
     window.scrollTo({
@@ -49,13 +47,11 @@ function smoothScrollTo(element, offset = 80) {
     });
 }
 
-// Función para validar email
 function validateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
-// Función para mostrar notificaciones
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -68,18 +64,70 @@ function showNotification(message, type = 'success') {
     
     document.body.appendChild(notification);
     
-    // Mostrar notificación
     setTimeout(() => notification.classList.add('show'), 100);
     
-    // Ocultar notificación
     setTimeout(() => {
         notification.classList.remove('show');
-        setTimeout(() => document.body.removeChild(notification), 300);
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
     }, 3000);
 }
 
 // =================================================================
-// MANEJO DEL HEADER Y NAVEGACIÓN - MEJORADO PARA MOBILE
+// ARREGLO DEFINITIVO PARA SCROLL MÓVIL - SIMPLIFICADO
+// =================================================================
+
+function setupMobileScroll() {
+    console.log('🔧 Configurando scroll móvil...');
+    
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isTouch = 'ontouchstart' in window;
+    
+    if (isMobile || isTouch) {
+        // Configuración simple y efectiva
+        document.documentElement.style.overflow = 'auto';
+        document.documentElement.style.webkitOverflowScrolling = 'touch';
+        document.documentElement.style.touchAction = 'pan-y';
+        
+        document.body.style.overflow = 'auto';
+        document.body.style.webkitOverflowScrolling = 'touch';
+        document.body.style.touchAction = 'pan-y';
+        document.body.style.position = 'relative';
+        document.body.style.height = 'auto';
+        document.body.style.minHeight = '100vh';
+        
+        // Solo prevenir zoom, NO prevenir scroll
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault(); // Prevenir zoom en doble tap
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+        
+        // Prevenir zoom con pellizco pero permitir scroll
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        document.addEventListener('gesturechange', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        document.addEventListener('gestureend', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        console.log('✅ Scroll móvil configurado');
+    }
+}
+
+// =================================================================
+// HEADER Y NAVEGACIÓN - SIMPLIFICADO
 // =================================================================
 
 class HeaderManager {
@@ -88,8 +136,6 @@ class HeaderManager {
         this.menuToggle = document.querySelector('.menu-toggle');
         this.nav = document.querySelector('nav');
         this.navLinks = document.querySelectorAll('nav a');
-        this.lastScrollTop = 0;
-        
         this.init();
     }
     
@@ -98,43 +144,20 @@ class HeaderManager {
         this.setupMobileMenu();
         this.setupSmoothScrolling();
         this.setupActiveNavigation();
-        this.preventHorizontalScroll();
-    }
-    
-    preventHorizontalScroll() {
-        // Prevenir scroll horizontal en toda la página
-        document.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        // Prevenir zoom con doble tap
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (e) => {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
     }
     
     setupScrollEffect() {
         const handleScroll = debounce(() => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
-            // Agregar clase scrolled al header
             if (scrollTop > 100) {
                 this.header.classList.add('scrolled');
             } else {
                 this.header.classList.remove('scrolled');
             }
-            
-            this.lastScrollTop = scrollTop;
         }, CONFIG.DEBOUNCE_DELAY);
         
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
     }
     
     setupMobileMenu() {
@@ -145,34 +168,16 @@ class HeaderManager {
             });
         }
         
-        // Cerrar menú al hacer click fuera
         document.addEventListener('click', (e) => {
             if (!this.nav.contains(e.target) && !this.menuToggle.contains(e.target)) {
                 this.closeMobileMenu();
             }
         });
         
-        // Cerrar menú al hacer click en un enlace
         this.navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 this.closeMobileMenu();
             });
-        });
-        
-        // Cerrar menú con tecla Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeMobileMenu();
-            }
-        });
-        
-        // Prevenir scroll del body cuando el menú está abierto
-        this.nav.addEventListener('transitionend', () => {
-            if (this.nav.classList.contains('active')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
         });
     }
     
@@ -183,11 +188,9 @@ class HeaderManager {
         if (this.nav.classList.contains('active')) {
             icon.classList.remove('fa-bars');
             icon.classList.add('fa-times');
-            this.menuToggle.setAttribute('aria-expanded', 'true');
         } else {
             icon.classList.remove('fa-times');
             icon.classList.add('fa-bars');
-            this.menuToggle.setAttribute('aria-expanded', 'false');
         }
     }
     
@@ -196,8 +199,6 @@ class HeaderManager {
         const icon = this.menuToggle.querySelector('i');
         icon.classList.remove('fa-times');
         icon.classList.add('fa-bars');
-        this.menuToggle.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
     }
     
     setupSmoothScrolling() {
@@ -208,7 +209,6 @@ class HeaderManager {
                 const targetElement = document.querySelector(targetId);
                 
                 if (targetElement) {
-                    // Ajustar offset para móviles
                     const isMobile = window.innerWidth <= 768;
                     const offset = isMobile ? 60 : 80;
                     smoothScrollTo(targetElement, offset);
@@ -239,12 +239,93 @@ class HeaderManager {
             });
         }, CONFIG.DEBOUNCE_DELAY);
         
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
     }
 }
 
 // =================================================================
-// ANIMACIONES EN SCROLL
+// ANIMACIÓN DE ESCRITURA DE CÓDIGO
+// =================================================================
+
+class CodeTypewriter {
+    constructor() {
+        this.codeLines = document.querySelectorAll('.code-line');
+        this.currentLine = 0;
+        this.isTyping = false;
+        this.init();
+    }
+    
+    init() {
+        setTimeout(() => {
+            this.startTyping();
+        }, 1000);
+        
+        this.setupIntersectionObserver();
+    }
+    
+    setupIntersectionObserver() {
+        const codeEditor = document.querySelector('.code-editor');
+        if (!codeEditor) return;
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !this.isTyping) {
+                    this.resetAnimation();
+                    setTimeout(() => {
+                        this.startTyping();
+                    }, 500);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+        
+        observer.observe(codeEditor);
+    }
+    
+    resetAnimation() {
+        this.currentLine = 0;
+        this.codeLines.forEach(line => {
+            line.classList.remove('show');
+            line.style.opacity = '0';
+            line.style.transform = 'translateY(10px)';
+        });
+    }
+    
+    startTyping() {
+        if (this.isTyping || this.currentLine >= this.codeLines.length) return;
+        
+        this.isTyping = true;
+        this.typeNextLine();
+    }
+    
+    typeNextLine() {
+        if (this.currentLine >= this.codeLines.length) {
+            this.isTyping = false;
+            
+            setTimeout(() => {
+                this.resetAnimation();
+                setTimeout(() => {
+                    this.startTyping();
+                }, 1000);
+            }, 5000);
+            return;
+        }
+        
+        const currentLineElement = this.codeLines[this.currentLine];
+        currentLineElement.classList.add('show');
+        
+        this.currentLine++;
+        
+        const delay = this.currentLine === this.codeLines.length ? 1000 : 400;
+        setTimeout(() => {
+            this.typeNextLine();
+        }, delay);
+    }
+}
+
+// =================================================================
+// RESTO DE COMPONENTES (mantener igual)
 // =================================================================
 
 class ScrollAnimations {
@@ -259,35 +340,28 @@ class ScrollAnimations {
     }
     
     addAnimationClasses() {
-        // Añadir clases de animación a elementos específicos
         const heroContent = document.querySelector('.hero-content');
         const heroImage = document.querySelector('.hero-image');
         const serviceCards = document.querySelectorAll('.service-card');
         const aboutContent = document.querySelector('.about-content');
-        const portfolioItems = document.querySelectorAll('.portfolio-item');
         
         if (heroContent) {
             heroContent.classList.add('animate-on-scroll', 'fade-in-left');
-            heroContent.style.opacity = '1'; // Asegurar visibilidad inicial
+            heroContent.style.opacity = '1';
         }
         if (heroImage) {
             heroImage.classList.add('animate-on-scroll', 'fade-in-right');
-            heroImage.style.opacity = '1'; // Asegurar visibilidad inicial
+            heroImage.style.opacity = '1';
         }
         if (aboutContent) {
             aboutContent.classList.add('animate-on-scroll');
-            aboutContent.style.opacity = '1'; // Asegurar visibilidad inicial
+            aboutContent.style.opacity = '1';
         }
         
         serviceCards.forEach((card, index) => {
             card.classList.add('animate-on-scroll');
             card.style.animationDelay = `${index * 0.1}s`;
-            card.style.opacity = '1'; // Asegurar visibilidad inicial
-        });
-        
-        portfolioItems.forEach((item, index) => {
-            item.classList.add('animate-on-scroll');
-            item.style.animationDelay = `${index * 0.1}s`;
+            card.style.opacity = '1';
         });
     }
     
@@ -312,7 +386,7 @@ class ScrollAnimations {
 }
 
 // =================================================================
-// MANEJO DEL FORMULARIO MULTI-PASO - ACTUALIZADO
+// FORMULARIO MULTI-PASO (mantener igual que antes)
 // =================================================================
 
 class MultiStepForm {
@@ -324,6 +398,7 @@ class MultiStepForm {
         this.currentStep = 1;
         this.totalSteps = this.steps.length;
         this.formData = {};
+        this.isTransitioning = false;
         
         this.init();
     }
@@ -337,7 +412,6 @@ class MultiStepForm {
     }
     
     setupFormNavigation() {
-        // Botones siguiente
         document.querySelectorAll('.next-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const nextStep = parseInt(btn.getAttribute('data-next'));
@@ -347,7 +421,6 @@ class MultiStepForm {
             });
         });
         
-        // Botones anterior
         document.querySelectorAll('.prev-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const prevStep = parseInt(btn.getAttribute('data-prev'));
@@ -357,7 +430,6 @@ class MultiStepForm {
     }
     
     setupFormValidation() {
-        // Validación en tiempo real
         this.form.addEventListener('input', (e) => {
             this.validateField(e.target);
         });
@@ -369,7 +441,6 @@ class MultiStepForm {
     }
     
     setupConditionalFields() {
-        // Mostrar campo de URL si tiene sitio web
         document.querySelectorAll('input[name="has-website"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 const websiteField = document.getElementById('current-website');
@@ -398,31 +469,22 @@ class MultiStepForm {
         let isValid = true;
         let errorMessage = '';
         
-        // Limpiar errores previos
         field.classList.remove('error');
         if (errorElement) {
             errorElement.remove();
         }
         
-        // Validaciones específicas
         if (field.required && !field.value.trim()) {
             isValid = false;
             errorMessage = 'Este campo es obligatorio';
         } else if (field.type === 'email' && field.value && !validateEmail(field.value)) {
             isValid = false;
             errorMessage = 'Ingresa un email válido';
-        } else if (field.type === 'url' && field.value && !this.validateUrl(field.value)) {
-            isValid = false;
-            errorMessage = 'Ingresa una URL válida';
-        } else if (field.type === 'tel' && field.value && !this.validatePhone(field.value)) {
-            isValid = false;
-            errorMessage = 'Ingresa un número de teléfono válido';
         } else if (field.name === 'accept-terms' && field.type === 'checkbox' && !field.checked) {
             isValid = false;
             errorMessage = 'Debes aceptar los términos para continuar';
         }
         
-        // Mostrar error si existe
         if (!isValid) {
             field.classList.add('error');
             const errorDiv = document.createElement('span');
@@ -432,22 +494,6 @@ class MultiStepForm {
         }
         
         return isValid;
-    }
-    
-    validateUrl(url) {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    }
-    
-    validatePhone(phone) {
-        // Validación básica para números de teléfono
-        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-        const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
-        return phoneRegex.test(cleanPhone) && cleanPhone.length >= 8;
     }
     
     validateCurrentStep() {
@@ -461,29 +507,6 @@ class MultiStepForm {
             }
         });
         
-        // Validaciones específicas por paso
-        if (this.currentStep === 1) {
-            const projectType = document.getElementById('project-type');
-            const hasWebsite = document.querySelector('input[name="has-website"]:checked');
-            
-            if (!projectType.value) {
-                this.validateField(projectType);
-                isValid = false;
-            }
-            
-            if (!hasWebsite) {
-                showNotification('Por favor selecciona si tienes un sitio web actualmente', 'error');
-                isValid = false;
-            }
-        } else if (this.currentStep === 5) {
-            // Validar términos y condiciones
-            const acceptTerms = document.querySelector('input[name="accept-terms"]');
-            if (!acceptTerms.checked) {
-                this.validateField(acceptTerms);
-                isValid = false;
-            }
-        }
-        
         return isValid;
     }
     
@@ -491,7 +514,6 @@ class MultiStepForm {
         const formData = new FormData(this.form);
         this.formData = {};
         
-        // Campos simples
         for (let [key, value] of formData.entries()) {
             if (this.formData[key]) {
                 if (Array.isArray(this.formData[key])) {
@@ -504,7 +526,6 @@ class MultiStepForm {
             }
         }
         
-        // Checkboxes múltiples
         const features = [];
         document.querySelectorAll('input[name="features"]:checked').forEach(checkbox => {
             features.push(checkbox.value);
@@ -515,26 +536,24 @@ class MultiStepForm {
     }
     
     goToStep(stepNumber) {
-        // Ocultar paso actual
-        this.steps[this.currentStep - 1].style.display = 'none';
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
         
-        // Mostrar nuevo paso
+        this.steps[this.currentStep - 1].style.display = 'none';
         this.currentStep = stepNumber;
         this.steps[this.currentStep - 1].style.display = 'block';
         
-        // Actualizar indicadores
         this.updateProgress();
         
-        // Scroll hacia el formulario
-        const formContainer = document.querySelector('.questionnaire-container');
-        smoothScrollTo(formContainer, 100);
+        setTimeout(() => {
+            this.isTransitioning = false;
+        }, 100);
     }
     
     updateProgress() {
         const progressPercentage = (this.currentStep / this.totalSteps) * 100;
         this.progressBar.style.width = `${progressPercentage}%`;
         
-        // Actualizar indicadores de pasos
         this.stepIndicators.forEach((indicator, index) => {
             if (index < this.currentStep) {
                 indicator.classList.add('active');
@@ -546,31 +565,23 @@ class MultiStepForm {
     
     async submitForm() {
         try {
-            // Mostrar loading
             const submitBtn = document.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             submitBtn.disabled = true;
             
-            // Actualizar datos del formulario
             this.updateFormData();
-            
-            // Preparar datos para EmailJS
             const templateParams = this.prepareEmailData();
             
-            // Enviar email con EmailJS
             await this.sendEmailWithEmailJS(templateParams);
-            
-            // Mostrar mensaje de éxito
             this.showSuccessMessage();
             
             showNotification('¡Formulario enviado correctamente! Te contactaré pronto.', 'success');
             
         } catch (error) {
             console.error('Error al enviar formulario:', error);
-            showNotification('Error al enviar el formulario. Por favor intenta nuevamente o contáctame directamente.', 'error');
+            showNotification('Error al enviar el formulario. Por favor intenta nuevamente.', 'error');
         } finally {
-            // Restaurar botón
             const submitBtn = document.querySelector('.submit-btn');
             submitBtn.textContent = 'Enviar Solicitud';
             submitBtn.disabled = false;
@@ -578,45 +589,30 @@ class MultiStepForm {
     }
     
     prepareEmailData() {
-        // Formatear features si existen
         const features = Array.isArray(this.formData.features) 
             ? this.formData.features.join(', ') 
             : (this.formData.features || 'No especificadas');
         
-        // Formatear datos para el email
         return {
-            // Datos personales
             first_name: this.formData['first-name'] || '',
             last_name: this.formData['last-name'] || '',
             email: this.formData.email || '',
             phone: this.formData.phone || '',
             company: this.formData.company || 'No especificada',
             how_found: this.formData['how-found'] || 'No especificado',
-            
-            // Datos del proyecto
             project_type: this.formData['project-type'] || '',
             project_purpose: this.formData['project-purpose'] || '',
             has_website: this.formData['has-website'] || '',
             website_url: this.formData['website-url'] || 'No tiene',
-            
-            // Diseño
             preferred_colors: this.formData['preferred-colors'] || 'No especificados',
             has_logo: this.formData['has-logo'] || '',
             reference_sites: this.formData['reference-sites'] || 'No especificados',
-            
-            // Funcionalidades
             features: features,
             additional_features: this.formData['additional-features'] || 'No especificadas',
-            
-            // Detalles técnicos
             responsive: this.formData.responsive || '',
             deadline: this.formData.deadline || 'No especificada',
             budget: this.formData.budget || '',
-            
-            // Comentarios
             additional_comments: this.formData['additional-comments'] || 'Sin comentarios adicionales',
-            
-            // Fecha de envío
             submission_date: new Date().toLocaleString('es-AR', {
                 timeZone: 'America/Argentina/Buenos_Aires',
                 year: 'numeric',
@@ -646,49 +642,35 @@ class MultiStepForm {
     }
     
     showSuccessMessage() {
-        // Ocultar formulario
         this.form.style.display = 'none';
         
-        // Mostrar mensaje de éxito
         const successMessage = document.getElementById('form-success');
         successMessage.style.display = 'block';
         
-        // Actualizar mensaje de éxito
         successMessage.innerHTML = `
             <div class="success-icon">
                 <i class="fas fa-check-circle"></i>
             </div>
             <h3>¡Gracias por tu solicitud!</h3>
-            <p>He recibido toda la información sobre tu proyecto y me pondré en contacto contigo en las próximas 24 horas para discutir los detalles y brindarte una cotización personalizada.</p>
-            <div class="success-details">
-                <p><strong>¿Qué sigue ahora?</strong></p>
-                <ul>
-                    <li>📧 Recibirás un email de confirmación</li>
-                    <li>📞 Te contactaré para una consulta inicial</li>
-                    <li>💼 Discutiremos tu proyecto en detalle</li>
-                    <li>📋 Te enviaré una propuesta personalizada</li>
-                </ul>
-            </div>
+            <p>He recibido toda la información sobre tu proyecto y me pondré en contacto contigo en las próximas 24 horas.</p>
             <div class="success-actions">
                 <a href="#inicio" class="btn primary-btn">Volver al inicio</a>
                 <a href="#contacto" class="btn secondary-btn">Información de contacto</a>
             </div>
         `;
         
-        // Scroll hacia el mensaje
         smoothScrollTo(successMessage, 100);
     }
 }
 
 // =================================================================
-// FILTRO DE PORTAFOLIO
+// COMPONENTES RESTANTES (simplificados)
 // =================================================================
 
 class PortfolioFilter {
     constructor() {
         this.filterButtons = document.querySelectorAll('.filter-btn');
         this.portfolioItems = document.querySelectorAll('.portfolio-item');
-        
         this.init();
     }
     
@@ -701,11 +683,9 @@ class PortfolioFilter {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                // Actualizar botón activo
                 this.filterButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 
-                // Filtrar elementos
                 const filter = button.getAttribute('data-filter');
                 this.filterItems(filter);
             });
@@ -733,10 +713,6 @@ class PortfolioFilter {
     }
 }
 
-// =================================================================
-// SLIDER DE TESTIMONIOS - MEJORADO
-// =================================================================
-
 class TestimonialsSlider {
     constructor() {
         this.wrapper = document.querySelector('.testimonial-wrapper');
@@ -758,10 +734,7 @@ class TestimonialsSlider {
         this.setupControls();
         this.setupDots();
         this.setupAutoPlay();
-        this.setupKeyboardNavigation();
         this.updateSlider();
-        
-        console.log(`Testimonios slider inicializado con ${this.totalSlides} testimonios`);
     }
     
     setupControls() {
@@ -795,7 +768,6 @@ class TestimonialsSlider {
     setupAutoPlay() {
         this.startAutoPlay();
         
-        // Pausar autoplay al hover o focus
         if (this.wrapper) {
             this.wrapper.addEventListener('mouseenter', () => {
                 this.stopAutoPlay();
@@ -804,27 +776,7 @@ class TestimonialsSlider {
             this.wrapper.addEventListener('mouseleave', () => {
                 this.startAutoPlay();
             });
-            
-            this.wrapper.addEventListener('focusin', () => {
-                this.stopAutoPlay();
-            });
-            
-            this.wrapper.addEventListener('focusout', () => {
-                this.startAutoPlay();
-            });
         }
-    }
-    
-    setupKeyboardNavigation() {
-        document.addEventListener('keydown', (e) => {
-            if (!this.isTransitioning) {
-                if (e.key === 'ArrowLeft') {
-                    this.goToPrevSlide();
-                } else if (e.key === 'ArrowRight') {
-                    this.goToNextSlide();
-                }
-            }
-        });
     }
     
     goToSlide(slideIndex) {
@@ -834,28 +786,19 @@ class TestimonialsSlider {
         const prevSlide = this.currentSlide;
         this.currentSlide = slideIndex;
         
-        // Animar salida del slide actual
         this.slides[prevSlide].classList.remove('active');
         
-        // Determinar dirección de la animación
         if (slideIndex > prevSlide) {
             this.slides[prevSlide].classList.add('prev');
         } else {
             this.slides[prevSlide].classList.add('next');
         }
         
-        // Animar entrada del nuevo slide
         setTimeout(() => {
-            // Limpiar clases del slide anterior
             this.slides[prevSlide].classList.remove('prev', 'next');
-            
-            // Activar nuevo slide
             this.slides[this.currentSlide].classList.add('active');
-            
-            // Actualizar controles
             this.updateControls();
             
-            // Permitir nuevas transiciones después de completar la animación
             setTimeout(() => {
                 this.isTransitioning = false;
             }, 500);
@@ -877,23 +820,13 @@ class TestimonialsSlider {
     }
     
     updateControls() {
-        // Actualizar dots
         this.dots.forEach((dot, index) => {
             dot.classList.toggle('active', index === this.currentSlide);
         });
-        
-        // Actualizar botones (opcional: deshabilitar en los extremos)
-        if (this.prevBtn) {
-            this.prevBtn.disabled = false; // Siempre habilitado por el loop
-        }
-        
-        if (this.nextBtn) {
-            this.nextBtn.disabled = false; // Siempre habilitado por el loop
-        }
     }
     
     startAutoPlay() {
-        this.stopAutoPlay(); // Limpiar interval anterior
+        this.stopAutoPlay();
         this.autoPlayInterval = setInterval(() => {
             if (!this.isTransitioning) {
                 this.goToNextSlide();
@@ -907,27 +840,7 @@ class TestimonialsSlider {
             this.autoPlayInterval = null;
         }
     }
-    
-    // Método para pausar temporalmente el autoplay
-    pauseAutoPlay(duration = 3000) {
-        this.stopAutoPlay();
-        setTimeout(() => {
-            this.startAutoPlay();
-        }, duration);
-    }
-    
-    // Método para destruir el slider (útil para cleanup)
-    destroy() {
-        this.stopAutoPlay();
-        this.slides.forEach(slide => {
-            slide.classList.remove('active', 'prev', 'next');
-        });
-    }
 }
-
-// =================================================================
-// MODO OSCURO
-// =================================================================
 
 class DarkModeToggle {
     constructor() {
@@ -939,7 +852,6 @@ class DarkModeToggle {
     }
     
     init() {
-        // No crear botón ya que está en el HTML
         this.loadDarkModePreference();
         this.setupEventListeners();
     }
@@ -961,7 +873,6 @@ class DarkModeToggle {
             });
         }
         
-        // Escuchar cambios en preferencias del sistema
         this.prefersDark.addEventListener('change', (e) => {
             if (localStorage.getItem('darkMode') === null) {
                 if (e.matches) {
@@ -985,7 +896,6 @@ class DarkModeToggle {
         this.body.classList.add('dark-mode');
         if (this.darkModeBtn) {
             this.darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
-            this.darkModeBtn.setAttribute('aria-label', 'Switch to light mode');
         }
         localStorage.setItem('darkMode', 'enabled');
     }
@@ -994,15 +904,10 @@ class DarkModeToggle {
         this.body.classList.remove('dark-mode');
         if (this.darkModeBtn) {
             this.darkModeBtn.innerHTML = '<i class="fas fa-moon"></i>';
-            this.darkModeBtn.setAttribute('aria-label', 'Switch to dark mode');
         }
         localStorage.setItem('darkMode', 'disabled');
     }
 }
-
-// =================================================================
-// BOTÓN SCROLL TO TOP (Actualizar para eliminar el dark mode btn)
-// =================================================================
 
 class ScrollToTop {
     constructor() {
@@ -1021,7 +926,6 @@ class ScrollToTop {
             this.scrollBtn = document.createElement('button');
             this.scrollBtn.className = 'scroll-top-btn';
             this.scrollBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
-            this.scrollBtn.setAttribute('aria-label', 'Scroll to top');
             document.body.appendChild(this.scrollBtn);
         }
     }
@@ -1037,7 +941,7 @@ class ScrollToTop {
             }
         }, CONFIG.DEBOUNCE_DELAY);
         
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
     }
     
     setupClickHandler() {
@@ -1051,228 +955,7 @@ class ScrollToTop {
 }
 
 // =================================================================
-// EFECTOS DE PARALLAX Y PARTÍCULAS
-// =================================================================
-
-class ParallaxEffects {
-    constructor() {
-        this.particles = document.querySelectorAll('.particle');
-        this.init();
-    }
-    
-    init() {
-        this.setupParticleMovement();
-        this.createAdditionalParticles();
-    }
-    
-    setupParticleMovement() {
-        window.addEventListener('scroll', debounce(() => {
-            const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.5;
-            
-            this.particles.forEach((particle, index) => {
-                const speed = 0.5 + (index % 3) * 0.3;
-                particle.style.transform = `translate3d(0, ${rate * speed}px, 0)`;
-            });
-        }, 16)); // 60fps
-    }
-    
-    createAdditionalParticles() {
-        const particlesContainer = document.querySelector('.particles');
-        if (!particlesContainer) return;
-        
-        // Crear partículas adicionales dinámicamente
-        for (let i = 0; i < 5; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 6 + 's';
-            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
-            particlesContainer.appendChild(particle);
-        }
-    }
-}
-
-// =================================================================
-// LAZY LOADING DE IMÁGENES
-// =================================================================
-
-class LazyLoader {
-    constructor() {
-        this.images = document.querySelectorAll('img[data-src]');
-        this.init();
-    }
-    
-    init() {
-        if ('IntersectionObserver' in window) {
-            this.setupIntersectionObserver();
-        } else {
-            this.loadAllImages();
-        }
-    }
-    
-    setupIntersectionObserver() {
-        const options = {
-            threshold: 0.1,
-            rootMargin: '50px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.loadImage(entry.target);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, options);
-        
-        this.images.forEach(img => observer.observe(img));
-    }
-    
-    loadImage(img) {
-        img.src = img.dataset.src;
-        img.onload = () => {
-            img.classList.add('loaded');
-        };
-    }
-    
-    loadAllImages() {
-        this.images.forEach(img => this.loadImage(img));
-    }
-}
-
-// =================================================================
-// PERFORMANCE MONITOR
-// =================================================================
-
-class PerformanceMonitor {
-    constructor() {
-        this.init();
-    }
-    
-    init() {
-        this.logPageLoadTime();
-        this.setupPerformanceObserver();
-    }
-    
-    logPageLoadTime() {
-        window.addEventListener('load', () => {
-            // Corregir el cálculo del tiempo de carga
-            const loadTime = performance.now();
-            console.log(`Tiempo de carga de la página: ${Math.round(loadTime)}ms`);
-        });
-    }
-    
-    setupPerformanceObserver() {
-        if ('PerformanceObserver' in window) {
-            const observer = new PerformanceObserver((list) => {
-                list.getEntries().forEach((entry) => {
-                    if (entry.name.includes('.jpg') || entry.name.includes('.png') || entry.name.includes('.webp')) {
-                        console.log(`Imagen cargada: ${entry.name} en ${entry.duration}ms`);
-                    }
-                });
-            });
-            
-            observer.observe({ entryTypes: ['resource'] });
-        }
-    }
-}
-
-// =================================================================
-// MANEJO DE ORIENTACIÓN Y RESIZE
-// =================================================================
-
-class ResponsiveHandler {
-    constructor() {
-        this.init();
-    }
-    
-    init() {
-        this.handleOrientationChange();
-        this.handleResize();
-    }
-    
-    handleOrientationChange() {
-        window.addEventListener('orientationchange', () => {
-            // Forzar recálculo después del cambio de orientación
-            setTimeout(() => {
-                window.scrollTo(0, window.scrollY);
-                this.adjustViewport();
-            }, 500);
-        });
-    }
-    
-    handleResize() {
-        window.addEventListener('resize', debounce(() => {
-            this.adjustViewport();
-        }, 250));
-    }
-    
-    adjustViewport() {
-        // Ajustar altura de viewport en móviles
-        if (window.innerWidth <= 768) {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        }
-    }
-}
-
-// =================================================================
-// OPTIMIZACIONES PARA TOUCH
-// =================================================================
-
-class TouchOptimizations {
-    constructor() {
-        this.init();
-    }
-    
-    init() {
-        this.addTouchFeedback();
-        this.preventScrollBounce();
-    }
-    
-    addTouchFeedback() {
-        // Añadir feedback visual para elementos táctiles
-        const touchElements = document.querySelectorAll('.btn, .service-card, .portfolio-item, .testimonial-card, .contact-card, .skill-tag');
-        
-        touchElements.forEach(element => {
-            element.addEventListener('touchstart', () => {
-                element.style.transform = 'scale(0.98)';
-            }, { passive: true });
-            
-            element.addEventListener('touchend', () => {
-                element.style.transform = '';
-            }, { passive: true });
-        });
-    }
-    
-    preventScrollBounce() {
-        // Prevenir el rebote de scroll en iOS
-        document.addEventListener('touchmove', (e) => {
-            const target = e.target;
-            const scrollableParent = this.findScrollableParent(target);
-            
-            if (!scrollableParent) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-    }
-    
-    findScrollableParent(element) {
-        while (element && element !== document.body) {
-            const style = window.getComputedStyle(element);
-            if (style.overflowY === 'scroll' || style.overflowY === 'auto') {
-                return element;
-            }
-            element = element.parentElement;
-        }
-        return null;
-    }
-}
-
-// =================================================================
-// INICIALIZACIÓN PRINCIPAL - ACTUALIZADA
+// INICIALIZACIÓN PRINCIPAL - SIMPLIFICADA
 // =================================================================
 
 class App {
@@ -1282,7 +965,6 @@ class App {
     }
     
     init() {
-        // Esperar a que el DOM esté completamente cargado
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.initializeComponents());
         } else {
@@ -1292,7 +974,10 @@ class App {
     
     initializeComponents() {
         try {
-            // Inicializar componentes principales
+            // Configurar scroll móvil PRIMERO
+            setupMobileScroll();
+            
+            // Inicializar componentes
             this.components.headerManager = new HeaderManager();
             this.components.scrollAnimations = new ScrollAnimations();
             this.components.multiStepForm = new MultiStepForm();
@@ -1300,22 +985,7 @@ class App {
             this.components.testimonialsSlider = new TestimonialsSlider();
             this.components.darkModeToggle = new DarkModeToggle();
             this.components.scrollToTop = new ScrollToTop();
-            this.components.parallaxEffects = new ParallaxEffects();
-            this.components.lazyLoader = new LazyLoader();
-            
-            // Nuevos componentes para móviles
-            this.components.responsiveHandler = new ResponsiveHandler();
-            this.components.touchOptimizations = new TouchOptimizations();
-            
-            // Solo en desarrollo
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                this.components.performanceMonitor = new PerformanceMonitor();
-            }
-            
-            // Configuraciones adicionales
-            this.setupKeyboardNavigation();
-            this.setupServiceWorker();
-            this.setupViewportFix();
+            this.components.codeTypewriter = new CodeTypewriter();
             
             console.log('✅ Aplicación inicializada correctamente');
             
@@ -1323,45 +993,12 @@ class App {
             console.error('❌ Error al inicializar la aplicación:', error);
         }
     }
-    
-    setupViewportFix() {
-        // Fix para altura de viewport en móviles
-        const setVH = () => {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        };
-        
-        setVH();
-        window.addEventListener('resize', setVH);
-        window.addEventListener('orientationchange', () => {
-            setTimeout(setVH, 500);
-        });
-    }
-    
-    setupKeyboardNavigation() {
-        // Navegación con teclado mejorada
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                // Cerrar menú móvil si está abierto
-                const nav = document.querySelector('nav');
-                if (nav && nav.classList.contains('active')) {
-                    nav.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            }
-        });
-    }
-    
-    setupServiceWorker() {
-        console.log('Service Worker deshabilitado temporalmente');
-    }
 }
 
 // =================================================================
-// ESTILOS ADICIONALES PARA NOTIFICACIONES
+// ESTILOS PARA NOTIFICACIONES
 // =================================================================
 
-// Agregar estilos para notificaciones dinámicamente
 const notificationStyles = `
     .notification {
         position: fixed;
@@ -1410,7 +1047,6 @@ const notificationStyles = `
     }
 `;
 
-// Agregar estilos al documento
 const styleSheet = document.createElement('style');
 styleSheet.textContent = notificationStyles;
 document.head.appendChild(styleSheet);
@@ -1419,8 +1055,5 @@ document.head.appendChild(styleSheet);
 // INICIALIZAR APLICACIÓN
 // =================================================================
 
-// Crear instancia principal de la aplicación
 const portfolioApp = new App();
-
-// Exportar para uso global si es necesario
 window.PortfolioApp = portfolioApp;

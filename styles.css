@@ -1,33 +1,171 @@
-/* Variables globales mejoradas */
+/* =================================================================
+   VARIABLES Y CONFIGURACIÓN GLOBAL - ARREGLO DEFINITIVO SCROLL
+   ================================================================= */
+
+/* Configuración base para scroll móvil */
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    height: 100%;
+    /* Forzar scroll en móviles */
+    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    /* CONFIGURACIÓN CRÍTICA PARA SCROLL MÓVIL */
+    overflow-x: hidden;
+    overflow-y: auto; /* CAMBIAR de 'scroll !important' a 'auto' */
+    height: auto;
+    min-height: 100vh;
+    position: relative;
+    
+    /* Propiedades visuales */
+    font-family: var(--font-secondary);
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    transition: var(--transition);
+    width: 100%;
+    max-width: 100vw;
+    
+    /* Scroll móvil mejorado */
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Configuración específica para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    html {
+        /* Forzar scroll táctil */
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overflow-y: auto;
+    }
+    
+    body {
+        /* Configuración optimizada para táctiles */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        position: relative;
+        min-height: 100vh;
+        height: auto;
+        
+        /* Eliminar transformaciones que interfieren */
+        transform: none;
+        backface-visibility: visible;
+    }
+    
+    /* Asegurar que las secciones sean scrolleables */
+    section {
+        position: relative;
+        z-index: 1;
+        transform: none;
+    }
+    
+    /* Arreglar elementos fixed que pueden interferir */
+    header {
+        position: fixed;
+        z-index: 1000;
+        transform: translateZ(0);
+    }
+}
+
+/* Configuración para iOS específicamente */
+@supports (-webkit-touch-callout: none) {
+    html, body {
+        -webkit-overflow-scrolling: touch !important;
+        overflow-y: auto !important;
+        touch-action: pan-y !important;
+    }
+    
+    body {
+        position: relative !important;
+        height: auto !important;
+        min-height: 100vh !important;
+    }
+    
+    /* Prevenir rebote en iOS pero mantener scroll */
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Configuración responsive para móviles */
+@media (max-width: 768px) {
+    html {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+    }
+    
+    body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        position: relative;
+        min-height: 100vh;
+        height: auto;
+        
+        /* Eliminar propiedades que pueden interferir */
+        transform: none;
+        backface-visibility: visible;
+    }
+    
+    /* Asegurar que el contenido sea scrolleable */
+    main, section {
+        position: relative;
+        z-index: 1;
+        height: auto;
+        min-height: auto;
+    }
+}
+
+/* Variables CSS */
 :root {
+    /* Colores principales */
     --primary-color: #4361ee;
     --secondary-color: #3a0ca3;
     --accent-color: #4cc9f0;
-    --dark-color: #2b2d42;
-    --light-color: #f8f9fa;
-    --gray-color: #6c757d;
-    --success-color: #4caf50;
-    --warning-color: #ff9800;
-    --danger-color: #f44336;
-    --white: #ffffff;
-    --black: #000000;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
     
-    /* Modo claro */
+    /* Colores de fondo */
     --bg-primary: #ffffff;
     --bg-secondary: #f8f9fa;
     --bg-card: #ffffff;
-    --text-primary: #2b2d42;
-    --text-secondary: #6c757d;
-    --border-color: #e9ecef;
     
+    /* Colores de texto */
+    --text-primary: #2c3e50;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    
+    /* Colores de borde */
+    --border-color: #e9ecef;
+    --border-dark: #dee2e6;
+    
+    /* Modo oscuro */
+    --dark-color: #1a1a2e;
+    --dark-secondary: #16213e;
+    --dark-accent: #0f3460;
+    
+    /* Tipografía */
     --font-primary: 'Poppins', sans-serif;
     --font-secondary: 'Inter', sans-serif;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
-    --border-radius: 12px;
+    
+    /* Espaciado */
+    --section-padding: clamp(3rem, 8vw, 6rem);
     --container-max-width: 1200px;
-    --section-padding: 5rem;
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Sombras */
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+    --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 /* Modo oscuro */
@@ -35,11 +173,13 @@ body.dark-mode {
     --bg-primary: #1a1a2e;
     --bg-secondary: #16213e;
     --bg-card: #0f3460;
-    --text-primary: #eee6e6;
-    --text-secondary: #a8a8a8;
+    --text-primary: #ffffff;
+    --text-secondary: #b8c5d6;
+    --text-muted: #8892b0;
     --border-color: #2d3748;
-    --shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.4);
+    --border-dark: #4a5568;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Reset y base */
@@ -49,32 +189,10 @@ body.dark-mode {
     box-sizing: border-box;
 }
 
-html {
-    scroll-behavior: smooth;
-    font-size: 16px;
-    overflow-x: hidden; /* Prevenir scroll horizontal */
-}
+/* =================================================================
+   FONDO ANIMADO Y PARTÍCULAS
+   ================================================================= */
 
-body {
-    font-family: var(--font-secondary);
-    line-height: 1.6;
-    color: var(--text-primary);
-    background: var(--bg-primary);
-    transition: var(--transition);
-    overflow-x: hidden; /* Prevenir scroll horizontal */
-    width: 100%;
-    max-width: 100vw;
-}
-
-/* Container global para prevenir overflow */
-.container {
-    width: 100%;
-    max-width: 100vw;
-    padding: 0 1rem;
-    margin: 0 auto;
-}
-
-/* Fondo animado */
 .animated-background {
     position: fixed;
     top: 0;
@@ -105,7 +223,6 @@ body {
     66% { transform: translateX(-70%) translateY(-70%) rotate(240deg); }
 }
 
-/* Partículas flotantes */
 .particles {
     position: fixed;
     top: 0;
@@ -155,7 +272,10 @@ body {
     }
 }
 
-/* Header */
+/* =================================================================
+   HEADER Y NAVEGACIÓN
+   ================================================================= */
+
 header {
     position: fixed;
     top: 0;
@@ -206,7 +326,6 @@ header.scrolled {
     background-clip: text;
 }
 
-/* Navegación */
 nav ul {
     display: flex;
     list-style: none;
@@ -247,7 +366,6 @@ nav a.active::after {
     padding: 0.5rem;
 }
 
-/* Botón modo oscuro */
 .dark-mode-btn {
     width: 40px;
     height: 40px;
@@ -277,7 +395,10 @@ body.dark-mode .dark-mode-btn {
     color: white;
 }
 
-/* Hero Section - DISEÑO DESKTOP RESTAURADO */
+/* =================================================================
+   HERO SECTION
+   ================================================================= */
+
 .hero {
     min-height: 100vh;
     display: flex;
@@ -380,52 +501,171 @@ body.dark-mode .dark-mode-btn {
     animation: fadeInRight 1s ease-out;
 }
 
-.animation-container {
-    background: var(--bg-card);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-    position: relative;
+/* =================================================================
+   EDITOR DE CÓDIGO ANIMADO
+   ================================================================= */
+
+.code-editor {
+    background: #1e1e1e;
+    border-radius: 12px;
     overflow: hidden;
-    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    position: relative;
 }
 
-.animation-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 30px;
-    background: linear-gradient(90deg, #ff5f56, #ffbd2e, #27ca3f);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
+.editor-header {
+    background: #2d2d30;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #3e3e42;
 }
 
-.code-animation {
-    margin-top: 30px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    color: var(--text-primary);
+.window-controls {
+    display: flex;
+    gap: 8px;
 }
 
-.code-animation pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+.control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.control:hover {
+    opacity: 0.8;
+}
+
+.control.close {
+    background: #ff5f57;
+}
+
+.control.minimize {
+    background: #ffbd2e;
+}
+
+.control.maximize {
+    background: #28ca42;
+}
+
+.file-name {
+    color: #cccccc;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.editor-content {
+    display: flex;
+    background: #1e1e1e;
+    min-height: 280px;
+    overflow: hidden;
+}
+
+.line-numbers {
+    background: #252526;
+    padding: 16px 8px;
+    color: #858585;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: right;
+    min-width: 40px;
+    user-select: none;
+    border-right: 1px solid #3e3e42;
+}
+
+.line-numbers span {
+    display: block;
+    padding: 0 8px;
+}
+
+.code-content {
+    flex: 1;
+    padding: 16px;
+    color: #d4d4d4;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
 }
 
 .code-line {
     opacity: 0;
-    animation: typewriter 0.8s forwards;
+    transform: translateY(10px);
+    white-space: nowrap;
+    margin-bottom: 2px;
+    position: relative;
 }
 
-.code-line:nth-child(1) { animation-delay: 0.5s; }
-.code-line:nth-child(2) { animation-delay: 1s; }
-.code-line:nth-child(3) { animation-delay: 1.5s; }
-.code-line:nth-child(4) { animation-delay: 2s; }
+.code-line.show {
+    animation: typeIn 0.8s ease-out forwards;
+}
 
-/* Secciones generales */
+.indent {
+    padding-left: 20px;
+}
+
+.indent-2 {
+    padding-left: 40px;
+}
+
+/* Colores de sintaxis */
+.tag {
+    color: #569cd6;
+}
+
+.attr {
+    color: #9cdcfe;
+}
+
+.string {
+    color: #ce9178;
+}
+
+.text {
+    color: #d4d4d4;
+}
+
+.cursor {
+    color: #ffffff;
+    animation: blink 1s infinite;
+    font-weight: bold;
+    position: absolute;
+}
+
+@keyframes typeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0;
+    }
+}
+
+body.dark-mode .code-editor {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* =================================================================
+   SECCIONES GENERALES
+   ================================================================= */
+
 section {
     padding: var(--section-padding) 2rem;
     max-width: var(--container-max-width);
@@ -462,7 +702,10 @@ section {
     margin: 0 auto;
 }
 
-/* About Section */
+/* =================================================================
+   ABOUT SECTION
+   ================================================================= */
+
 .about-content {
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -560,7 +803,10 @@ section {
     min-width: 20px;
 }
 
-/* Services Section */
+/* =================================================================
+   SERVICES SECTION
+   ================================================================= */
+
 .services {
     background: var(--bg-secondary);
 }
@@ -606,7 +852,7 @@ section {
 .service-icon {
     width: 80px;
     height: 80px;
-    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    background: linear-gradient(45deg, var (--primary-color), var(--accent-color));
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -636,7 +882,7 @@ section {
 
 .service-features li {
     padding: 0.25rem 0;
-    color: var(--text-secondary);
+    color: var (--text-secondary);
     position: relative;
     padding-left: 1.5rem;
 }
@@ -656,7 +902,49 @@ section {
     margin-bottom: 1.5rem;
 }
 
-/* Formulario - RESPONSIVE */
+.service-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    margin-top: 1rem;
+    transition: var(--transition);
+}
+
+.service-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+body.dark-mode .service-btn {
+    background: linear-gradient(45deg, var(--accent-color), #00d4ff);
+    color: var(--dark-color);
+    font-weight: 600;
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 4px 15px rgba(76, 201, 240, 0.3);
+}
+
+body.dark-mode .service-btn:hover {
+    background: linear-gradient(45deg, #00d4ff, var(--accent-color));
+    color: var(--dark-color);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(76, 201, 240, 0.4);
+    border-color: #00d4ff;
+}
+
+.service-btn:focus {
+    outline: 3px solid rgba(76, 201, 240, 0.5);
+    outline-offset: 2px;
+}
+
+body.dark-mode .service-btn:focus {
+    outline: 3px solid rgba(76, 201, 240, 0.7);
+}
+
+/* =================================================================
+   FORMULARIO
+   ================================================================= */
+
 .questionnaire {
     background: var(--bg-secondary);
 }
@@ -739,7 +1027,7 @@ section {
     border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
     background: var(--bg-primary);
-    color: var(--text-primary);
+    color: var (--text-primary);
     font-size: clamp(0.9rem, 2.5vw, 1rem);
     transition: var(--transition);
 }
@@ -806,7 +1094,6 @@ section {
     border: none;
 }
 
-/* Estilos adicionales para el formulario mejorado */
 .form-group input[type="tel"] {
     font-family: monospace;
 }
@@ -848,14 +1135,6 @@ section {
     justify-content: center;
 }
 
-.error-message {
-    color: var(--danger-color);
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-    display: block;
-}
-
-/* Animación para el spinner del botón */
 .fa-spinner {
     animation: spin 1s linear infinite;
 }
@@ -869,7 +1148,19 @@ section {
     }
 }
 
-/* Portfolio - RESPONSIVE */
+.form-step {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.form-step:not([style*="display: none"]) {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* =================================================================
+   PORTFOLIO
+   ================================================================= */
+
 .portfolio-filter {
     display: flex;
     justify-content: center;
@@ -983,7 +1274,10 @@ section {
     font-size: clamp(0.7rem, 2vw, 0.875rem);
 }
 
-/* Testimonials - RESPONSIVE */
+/* =================================================================
+   TESTIMONIOS
+   ================================================================= */
+
 .testimonials {
     background: var(--bg-secondary);
 }
@@ -1160,7 +1454,10 @@ section {
     box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
 }
 
-/* Contact - RESPONSIVE */
+/* =================================================================
+   CONTACTO
+   ================================================================= */
+
 .contact-container {
     max-width: 100%;
     margin: 0 auto;
@@ -1245,7 +1542,10 @@ section {
     transform: translateY(-3px);
 }
 
-/* Botones flotantes - RESPONSIVE */
+/* =================================================================
+   BOTONES FLOTANTES
+   ================================================================= */
+
 .scroll-top-btn {
     position: fixed;
     bottom: 2rem;
@@ -1276,13 +1576,10 @@ section {
     box-shadow: var(--shadow-hover);
 }
 
-.dark-mode-btn {
-    bottom: 5rem;
-    opacity: 1;
-    transform: translateY(0);
-}
+/* =================================================================
+   ANIMACIONES
+   ================================================================= */
 
-/* Animaciones */
 @keyframes fadeInLeft {
     from {
         opacity: 0;
@@ -1316,12 +1613,6 @@ section {
     }
 }
 
-@keyframes typewriter {
-    to {
-        opacity: 1;
-    }
-}
-
 @keyframes rotate {
     from {
         transform: rotate(0deg);
@@ -1342,18 +1633,6 @@ section {
     }
 }
 
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-100px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
-}
-
-/* Clases de animación para scroll */
 .animate-on-scroll {
     opacity: 0;
     transform: translateY(30px);
@@ -1381,109 +1660,11 @@ section {
     transform: translateX(0);
 }
 
-/* RESPONSIVE DESIGN MEJORADO */
-@media (min-width: 481px) {
-    .cta-buttons {
-        flex-direction: row;
-        justify-content: center;
-    }
-    
-    .btn {
-        width: auto;
-        min-width: 200px;
-    }
-    
-    .radio-group,
-    .checkbox-group {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-    
-    .form-buttons {
-        flex-direction: row;
-        justify-content: space-between;
-    }
-    
-    .contact-info {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-}
+/* =================================================================
+   RESPONSIVE DESIGN
+   ================================================================= */
 
-@media (min-width: 768px) {
-    .menu-toggle {
-        display: none;
-    }
-    
-    nav ul {
-        position: static;
-        transform: none;
-        opacity: 1;
-        visibility: visible;
-        background: transparent;
-        flex-direction: row;
-        padding: 0;
-        box-shadow: none;
-        border: none;
-        width: auto;
-    }
-    
-    .hero {
-        flex-direction: row;
-        text-align: left;
-        gap: 4rem;
-    }
-    
-    .hero-content {
-        text-align: left;
-    }
-    
-    .cta-buttons {
-        justify-content: flex-start;
-        align-items: flex-start;
-    }
-    
-    .about-content {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        text-align: left;
-    }
-    
-    .about-text {
-        text-align: left;
-    }
-    
-    .skill-tags {
-        justify-content: flex-start;
-    }
-    
-    .values ul {
-        text-align: left;
-        margin: 0;
-    }
-    
-    .services-container {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
-    
-    .portfolio-grid {
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    }
-    
-    .testimonial-author {
-        flex-direction: row;
-        text-align: left;
-    }
-}
-
-/* CORRECIÓN ESPECÍFICA PARA MÓVILES Y iPhone 14 */
 @media (max-width: 768px) {
-    /* Variables específicas para móvil */
-    :root {
-        --section-padding: clamp(1.5rem, 4vw, 4rem);
-        --hero-padding-top: calc(80px + 1.5rem); /* Variable específica para hero */
-    }
-    
-    /* Header en móvil */
     .header-container {
         padding: 0 1rem;
     }
@@ -1524,56 +1705,61 @@ section {
         font-size: clamp(0.7rem, 2vw, 0.9rem);
     }
     
-    /* Hero en móvil - CORREGIDO COMPLETAMENTE PARA iPhone 14 */
+    /* HERO - CENTRADO CORRECTO */
     .hero {
         flex-direction: column;
         text-align: center;
-        padding: var(--hero-padding-top) 1rem 2rem; /* Usar variable específica */
-        gap: 1.5rem;
+        padding: calc(75px + 2rem) 1rem 2rem; /* Padding normal, sin trucos raros */
+        gap: 2rem;
         min-height: 100vh;
         justify-content: center;
         align-items: center;
-        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto; /* Centrado normal */
+        /* ELIMINAR estas líneas problemáticas: */
+        /* left: 50%; */
+        /* right: 50%; */
+        /* margin-left: -50vw; */
+        /* margin-right: -50vw; */
     }
     
     .hero-content {
-        text-align: center;
         width: 100%;
         max-width: 100%;
+        padding: 0;
+        margin: 0 auto;
+        text-align: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        z-index: 1;
     }
     
     .hero-content h1 {
-        font-size: clamp(1.8rem, 6vw, 3rem); /* Ajustar tamaño para iPhone 14 */
+        font-size: clamp(1.8rem, 6vw, 3rem);
         line-height: 1.15;
         margin-bottom: 1.2rem;
-        word-wrap: break-word;
-        hyphens: auto;
-        overflow-wrap: break-word;
-        max-width: 100%;
         text-align: center;
-        padding: 0 0.5rem; /* Padding lateral para evitar cortes */
+        width: 100%;
     }
     
     .hero-content p {
         font-size: clamp(1rem, 3.5vw, 1.2rem);
         margin-bottom: 1.8rem;
-        max-width: 100%;
         line-height: 1.6;
         text-align: center;
-        padding: 0 0.5rem;
+        width: 100%;
     }
     
     .cta-buttons {
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         width: 100%;
         gap: 1rem;
-        margin-top: 0.5rem;
+        margin: 0 auto;
+        padding: 0;
     }
     
     .btn {
@@ -1581,272 +1767,269 @@ section {
         max-width: 300px;
         padding: clamp(0.8rem, 3vw, 1rem) clamp(1.2rem, 4vw, 1.8rem);
         font-size: clamp(0.9rem, 2.8vw, 1rem);
+        margin: 0 auto;
+        display: block;
+        text-align: center;
     }
     
+    /* HERO IMAGE - CENTRADO CORRECTO */
     .hero-image {
         width: 100%;
         max-width: 100%;
-        margin-top: 1rem;
+        margin: 0 auto;
+        padding: 0;
         display: flex;
         justify-content: center;
         align-items: center;
     }
     
-    .animation-container {
-        padding: clamp(1rem, 3vw, 1.8rem);
-        max-width: 100%;
+    .code-editor {
+        max-width: 95%;
         width: 100%;
-        max-width: 90%;
+        margin: 0 auto;
     }
     
-    .code-animation {
-        font-size: clamp(0.65rem, 2vw, 0.85rem);
-    }
-    
-    /* About en móvil - CORREGIDO */
+    /* ABOUT - CENTRADO LIMPIO */
     .about-content {
-        display: flex;
-        flex-direction: column;
+        display: block;
         text-align: center;
-        gap: 1.5rem;
+        padding: 0;
+    }
+    
+    .about-image {
+        margin-bottom: 2rem;
     }
     
     .profile-image {
-        width: clamp(180px, 45vw, 250px);
-        height: clamp(180px, 45vw, 250px);
-        margin: 0 auto 1rem;
+        width: clamp(200px, 50vw, 250px);
+        height: clamp(200px, 50vw, 250px);
     }
     
     .about-text {
         text-align: center;
-        width: 100%;
-        max-width: 100%;
     }
     
     .about-text h3 {
-        font-size: clamp(1.3rem, 4.5vw, 1.8rem);
-        margin-bottom: 0.8rem;
+        font-size: clamp(1.5rem, 5vw, 2rem);
+        text-align: center;
     }
     
     .about-text p {
-        font-size: clamp(0.85rem, 2.8vw, 1rem);
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
+        font-size: clamp(1rem, 3vw, 1.1rem);
+        text-align: center;
     }
     
-    .skills h4, .values h4 {
-        font-size: clamp(1rem, 3vw, 1.2rem);
-        margin-bottom: 0.8rem;
+    .skills,
+    .values {
+        text-align: center;
     }
     
     .skill-tags {
         justify-content: center;
-        gap: 0.4rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .skill-tag {
-        font-size: clamp(0.75rem, 2vw, 0.9rem);
-        padding: 0.4rem 0.8rem;
     }
     
     .values ul {
-        text-align: left;
-        max-width: 350px;
+        max-width: 300px;
         margin: 0 auto;
-    }
-    
-    .values li {
-        font-size: clamp(0.85rem, 2.5vw, 1rem);
-        margin-bottom: 0.4rem;
-    }
-    
-    /* Secciones generales en móvil */
-    section {
-        padding: var(--section-padding) 1rem;
-    }
-    
-    .section-header h2 {
-        font-size: clamp(1.6rem, 5vw, 2.5rem);
-        margin-bottom: 0.8rem;
-    }
-    
-    .section-header p {
-        font-size: clamp(0.9rem, 2.8vw, 1.1rem);
-        padding: 0 0.5rem;
-    }
-    
-    /* Services en móvil */
-    .services-container {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .service-card {
-        padding: clamp(1.2rem, 4vw, 2rem);
-    }
-    
-    .service-icon {
-        width: clamp(50px, 12vw, 70px);
-        height: clamp(50px, 12vw, 70px);
-        font-size: clamp(1.3rem, 3.5vw, 1.8rem);
-        margin-bottom: 1rem;
-    }
-    
-    .service-card h3 {
-        font-size: clamp(1.1rem, 3.5vw, 1.4rem);
-        margin-bottom: 0.8rem;
-    }
-    
-    .service-card p {
-        font-size: clamp(0.85rem, 2.5vw, 1rem);
-        margin-bottom: 1.2rem;
-    }
-    
-    .service-features li {
-        font-size: clamp(0.8rem, 2vw, 0.9rem);
-    }
-    
-    .service-price {
-        font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+        text-align: left;
     }
 }
 
-/* CORRECIÓN ESPECÍFICA PARA iPhone 14 y pantallas similares (430px) */
 @media (max-width: 430px) {
-    :root {
-        --hero-padding-top: calc(75px + 1.2rem); /* Más específico para iPhone 14 */
-    }
-    
     .hero {
-        padding: var(--hero-padding-top) 1rem 1.5rem;
-        min-height: 100vh;
-        justify-content: center;
-        align-items: center;
+        padding: calc(70px + 1.0rem) 1rem 1.5rem; /* Padding normal */
+        /* ELIMINAR estas líneas: */
+        /* width: 100vw; */
+        /* left: 50%; */
+        /* right: 50%; */
+        /* margin-left: -50vw; */
+        /* margin-right: -50vw; */
     }
     
     .hero-content {
-        margin-top: 0; /* Eliminar margen superior */
-        padding-top: 0;
+        max-width: 100%;
+        padding: 0;
+        width: 100%;
     }
     
     .hero-content h1 {
-        font-size: clamp(1.6rem, 5.8vw, 2.4rem); /* Tamaño específico para iPhone 14 */
+        font-size: clamp(1.6rem, 5.8vw, 2.4rem);
         line-height: 1.1;
         margin-bottom: 1rem;
-        padding: 0 0.8rem;
         text-align: center;
-        display: block;
         width: 100%;
-        box-sizing: border-box;
     }
     
     .hero-content p {
         font-size: clamp(0.9rem, 3.2vw, 1.1rem);
         margin-bottom: 1.5rem;
-        padding: 0 0.8rem;
         text-align: center;
+        width: 100%;
     }
     
     .btn {
         max-width: 280px;
         padding: 0.8rem 1.5rem;
         font-size: 0.95rem;
+        margin: 0 auto;
     }
     
-    .animation-container {
-        padding: 1rem;
-        max-width: 95%;
+    .hero-image {
+        max-width: 100%;
+        padding: 0;
+        margin: 0 auto;
     }
     
-    .code-animation {
-        font-size: 0.7rem;
+    .code-editor {
+        width: 100%;
+        max-width: 90%;
+    }
+    
+    .profile-image {
+        width: clamp(180px, 45vw, 220px);
+        height: clamp(180px, 45vw, 220px);
     }
 }
 
-/* CORRECIÓN ESPECÍFICA PARA iPhone 14 Pro Max y pantallas altas */
-@media (max-width: 430px) and (min-height: 900px) {
-    :root {
-        --hero-padding-top: calc(80px + 1.5rem);
-    }
-    
+@media (max-width: 320px) {
     .hero {
-        min-height: 95vh; /* Reducir altura en pantallas muy altas */
-        justify-content: center;
-        padding: var(--hero-padding-top) 1rem 2rem;
+        padding: calc(70px + 1rem) 1rem 1rem; /* Padding normal */
+        /* ELIMINAR estas líneas problemáticas: */
+        /* width: 100vw; */
+        /* left: 50%; */
+        /* right: 50%; */
+        /* margin-left: -50vw; */
+        /* margin-right: -50vw; */
     }
     
     .hero-content {
-        margin-bottom: 1rem;
+        max-width: 100%;
+        padding: 0;
+        width: 100%;
     }
     
-    .hero-content h1 {
-        margin-bottom: 1.2rem;
-    }
-    
-    .about-content {
-        gap: 1.5rem;
-    }
-    
-    .about-text {
-        padding: 0 1rem;
-    }
-}
-
-/* CORRECIÓN PARA PANTALLAS MUY PEQUEÑAS (320px) */
-@media (max-width: 320px) {
-    :root {
-        --hero-padding-top: calc(70px + 1rem);
-    }
-    
-    .hero {
-        padding: var(--hero-padding-top) 0.8rem 1rem;
-        min-height: 90vh;
-    }
-    
-    .hero-content h1 {
-        font-size: 1.4rem;
-        line-height: 1.05;
-        margin-bottom: 0.8rem;
-        padding: 0 0.5rem;
-    }
-    
-    .hero-content p {
-        font-size: 0.85rem;
-        margin-bottom: 1.2rem;
-        padding: 0 0.5rem;
+    .hero-image {
+        max-width: 100%;
+        padding: 0;
     }
     
     .btn {
-        padding: 0.7rem 1.2rem;
-        font-size: 0.9rem;
         max-width: 250px;
     }
 }
 
-/* MEJORAS ADICIONALES PARA EVITAR DESBORDAMIENTO */
-.hero-content h1 {
-    /* Asegurar que no se desborde en ningún dispositivo */
-    max-width: 100%;
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
-    white-space: normal;
-}
-
-/* Asegurar que el contenido no se pegue al header */
-@media (max-width: 768px) {
-    .hero::before {
-        content: '';
-        display: block;
-        height: 80px; /* Altura del header */
-        margin-top: -80px;
-        visibility: hidden;
+@media (min-width: 481px) {
+    .cta-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .btn {
+        width: auto;
+        min-width: 200px;
+    }
+    
+    .radio-group,
+    .checkbox-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .form-buttons {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .contact-info {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
 }
 
-/* Mejoras de accesibilidad */
+@media (min-width: 769px) {
+    .menu-toggle {
+        display: none;
+    }
+    
+    nav ul {
+        position: static;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        background: transparent;
+        flex-direction: row;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+        width: auto;
+    }
+    
+    .hero {
+        flex-direction: row;
+        text-align: left;
+        gap: 4rem;
+        padding: calc(80px + 2rem) 2rem 2rem;
+    }
+    
+    .hero-content {
+        text-align: left;
+        flex: 1;
+    }
+    
+    .hero-content h1,
+    .hero-content p {
+        text-align: left;
+    }
+    
+    .cta-buttons {
+        justify-content: flex-start;
+        flex-direction: row;
+    }
+    
+    .about-content {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 4rem;
+        text-align: left;
+    }
+    
+    .about-text {
+        text-align: left;
+    }
+    
+    .about-text h3,
+    .about-text p,
+    .skills h4,
+    .values h4 {
+        text-align: left;
+    }
+    
+    .skill-tags {
+        justify-content: flex-start;
+    }
+    
+    .values ul {
+        text-align: left;
+        max-width: none;
+    }
+    
+    .services-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .portfolio-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+    
+    .testimonial-author {
+        flex-direction: row;
+        text-align: left;
+    }
+}
+
+/* =================================================================
+   MEJORAS DE ACCESIBILIDAD
+   ================================================================= */
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -1855,7 +2038,6 @@ section {
     }
 }
 
-/* Estados de focus para navegación por teclado */
 button:focus,
 input:focus,
 select:focus,
@@ -1865,7 +2047,6 @@ a:focus {
     outline-offset: 2px;
 }
 
-/* Loading state */
 .loading {
     opacity: 0.7;
     pointer-events: none;
@@ -1883,12 +2064,6 @@ a:focus {
     border-radius: 50%;
     animation: spin 1s linear infinite;
     transform: translate(-50%, -50%);
-}
-
-@keyframes spin {
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
 }
 
 /* Prevenir zoom en inputs en iOS */
@@ -1913,57 +2088,6 @@ a:focus {
     }
 }
 
-/* Evitar problemas de diseño en pantallas muy pequeñas */
-@media (max-width: 320px) {
-    .hero-content h1 {
-        font-size: 1.5rem;
-    }
-    
-    .section-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .btn {
-        padding: 0.8rem 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .service-card,
-    .project-form,
-    .testimonial-card {
-        padding: 1rem;
-    }
-}
-
-/* Asegurar que el texto del h1 no se corte */
-.hero-content h1 {
-    word-break: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
-    white-space: normal;
-}
-
-/* Mejoras adicionales para iPhone 14 Pro */
-@media (max-width: 430px) and (min-height: 900px) {
-    .hero {
-        min-height: 85vh;
-        justify-content: center;
-    }
-    
-    .hero-content {
-        margin-bottom: 1rem;
-    }
-    
-    .about-content {
-        gap: 1.2rem;
-    }
-    
-    .about-text {
-        padding: 0 0.5rem;
-    }
-}
-
-/* Responsive para success message */
 @media (max-width: 768px) {
     .success-actions {
         flex-direction: column;
