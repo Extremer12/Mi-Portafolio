@@ -1935,8 +1935,8 @@ body.dark-mode .form-group textarea:disabled {
         text-align: center;
         width: 100%;
         /* Centrado perfecto del h1 */
-        margin-left: auto;
-        margin-right: auto;
+        margin-left: 0;
+        margin-right: 410px;
         padding: 0;
     }
     
@@ -1947,8 +1947,8 @@ body.dark-mode .form-group textarea:disabled {
         text-align: center;
         width: 100%;
         /* Centrado perfecto del párrafo */
-        margin-left: auto;
-        margin-right: auto;
+        margin-left: 0;
+        margin-right: 410px;
         padding: 0;
     }
     
@@ -1958,7 +1958,8 @@ body.dark-mode .form-group textarea:disabled {
         justify-content: center;
         width: 100%;
         gap: 1rem;
-        margin: 0 auto;
+        margin-left: 0;
+        margin-right: 410px; /* Alinear con el contenido 
         padding: 0;
         /* Centrado perfecto de los botones */
         display: flex;
@@ -1978,7 +1979,8 @@ body.dark-mode .form-group textarea:disabled {
     .hero-image {
         width: 100%;
         max-width: 90%; /* Mismo ancho que hero-content */
-        margin: 1rem auto 0;
+        margin-left: 0;
+        margin-right: 530px; 
         padding: 0 1rem; /* Mismo padding que hero-content */
         display: flex;
         justify-content: center;
