@@ -11,6 +11,19 @@ const CONFIG = {
 };
 
 // =================================================================
+// CONFIGURACIÓN DE EMAILJS - ACTUALIZADO CON TUS DATOS REALES
+// =================================================================
+
+const EMAIL_CONFIG = {
+    SERVICE_ID: 'service_g50s2sv', // ✅ Tu Service ID
+    TEMPLATE_ID: 'template_0fc49do', // ✅ Tu Template ID
+    PUBLIC_KEY: 'TU_PUBLIC_KEY_AQUI' // 🔄 Reemplaza con tu Public Key
+};
+
+// Inicializar EmailJS
+emailjs.init(EMAIL_CONFIG.PUBLIC_KEY);
+
+// =================================================================
 // UTILIDADES GENERALES
 // =================================================================
 
@@ -299,7 +312,7 @@ class ScrollAnimations {
 }
 
 // =================================================================
-// MANEJO DEL FORMULARIO MULTI-PASO
+// MANEJO DEL FORMULARIO MULTI-PASO - ACTUALIZADO
 // =================================================================
 
 class MultiStepForm {
@@ -401,6 +414,12 @@ class MultiStepForm {
         } else if (field.type === 'url' && field.value && !this.validateUrl(field.value)) {
             isValid = false;
             errorMessage = 'Ingresa una URL válida';
+        } else if (field.type === 'tel' && field.value && !this.validatePhone(field.value)) {
+            isValid = false;
+            errorMessage = 'Ingresa un número de teléfono válido';
+        } else if (field.name === 'accept-terms' && field.type === 'checkbox' && !field.checked) {
+            isValid = false;
+            errorMessage = 'Debes aceptar los términos para continuar';
         }
         
         // Mostrar error si existe
@@ -422,6 +441,13 @@ class MultiStepForm {
         } catch {
             return false;
         }
+    }
+    
+    validatePhone(phone) {
+        // Validación básica para números de teléfono
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+        return phoneRegex.test(cleanPhone) && cleanPhone.length >= 8;
     }
     
     validateCurrentStep() {
@@ -447,6 +473,13 @@ class MultiStepForm {
             
             if (!hasWebsite) {
                 showNotification('Por favor selecciona si tienes un sitio web actualmente', 'error');
+                isValid = false;
+            }
+        } else if (this.currentStep === 5) {
+            // Validar términos y condiciones
+            const acceptTerms = document.querySelector('input[name="accept-terms"]');
+            if (!acceptTerms.checked) {
+                this.validateField(acceptTerms);
                 isValid = false;
             }
         }
@@ -516,62 +549,100 @@ class MultiStepForm {
             // Mostrar loading
             const submitBtn = document.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Enviando...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             submitBtn.disabled = true;
             
             // Actualizar datos del formulario
             this.updateFormData();
             
-            // Preparar datos para envío
-            const formData = new FormData();
-            Object.keys(this.formData).forEach(key => {
-                if (Array.isArray(this.formData[key])) {
-                    formData.append(key, this.formData[key].join(', '));
-                } else {
-                    formData.append(key, this.formData[key]);
-                }
-            });
+            // Preparar datos para EmailJS
+            const templateParams = this.prepareEmailData();
             
-            // Enviar formulario (simulado)
-            await this.sendFormData(formData);
+            // Enviar email con EmailJS
+            await this.sendEmailWithEmailJS(templateParams);
             
             // Mostrar mensaje de éxito
             this.showSuccessMessage();
             
+            showNotification('¡Formulario enviado correctamente! Te contactaré pronto.', 'success');
+            
         } catch (error) {
             console.error('Error al enviar formulario:', error);
-            showNotification('Error al enviar el formulario. Por favor intenta nuevamente.', 'error');
+            showNotification('Error al enviar el formulario. Por favor intenta nuevamente o contáctame directamente.', 'error');
         } finally {
             // Restaurar botón
             const submitBtn = document.querySelector('.submit-btn');
-            submitBtn.textContent = 'Enviar';
+            submitBtn.textContent = 'Enviar Solicitud';
             submitBtn.disabled = false;
         }
     }
     
-    async sendFormData(formData) {
-        // Simular envío de formulario
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log('Datos del formulario:', Object.fromEntries(formData));
-                resolve();
-            }, 2000);
-        });
+    prepareEmailData() {
+        // Formatear features si existen
+        const features = Array.isArray(this.formData.features) 
+            ? this.formData.features.join(', ') 
+            : (this.formData.features || 'No especificadas');
         
-        // Para usar con Formspree u otro servicio:
-        /*
-        const response = await fetch(CONFIG.EMAIL_SERVICE, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Error en el envío');
+        // Formatear datos para el email
+        return {
+            // Datos personales
+            first_name: this.formData['first-name'] || '',
+            last_name: this.formData['last-name'] || '',
+            email: this.formData.email || '',
+            phone: this.formData.phone || '',
+            company: this.formData.company || 'No especificada',
+            how_found: this.formData['how-found'] || 'No especificado',
+            
+            // Datos del proyecto
+            project_type: this.formData['project-type'] || '',
+            project_purpose: this.formData['project-purpose'] || '',
+            has_website: this.formData['has-website'] || '',
+            website_url: this.formData['website-url'] || 'No tiene',
+            
+            // Diseño
+            preferred_colors: this.formData['preferred-colors'] || 'No especificados',
+            has_logo: this.formData['has-logo'] || '',
+            reference_sites: this.formData['reference-sites'] || 'No especificados',
+            
+            // Funcionalidades
+            features: features,
+            additional_features: this.formData['additional-features'] || 'No especificadas',
+            
+            // Detalles técnicos
+            responsive: this.formData.responsive || '',
+            deadline: this.formData.deadline || 'No especificada',
+            budget: this.formData.budget || '',
+            
+            // Comentarios
+            additional_comments: this.formData['additional-comments'] || 'Sin comentarios adicionales',
+            
+            // Fecha de envío
+            submission_date: new Date().toLocaleString('es-AR', {
+                timeZone: 'America/Argentina/Buenos_Aires',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        };
+    }
+    
+    async sendEmailWithEmailJS(templateParams) {
+        try {
+            const response = await emailjs.send(
+                EMAIL_CONFIG.SERVICE_ID,
+                EMAIL_CONFIG.TEMPLATE_ID,
+                templateParams
+            );
+            
+            console.log('Email enviado correctamente:', response);
+            return response;
+            
+        } catch (error) {
+            console.error('Error al enviar email:', error);
+            throw error;
         }
-        */
     }
     
     showSuccessMessage() {
@@ -581,6 +652,28 @@ class MultiStepForm {
         // Mostrar mensaje de éxito
         const successMessage = document.getElementById('form-success');
         successMessage.style.display = 'block';
+        
+        // Actualizar mensaje de éxito
+        successMessage.innerHTML = `
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>¡Gracias por tu solicitud!</h3>
+            <p>He recibido toda la información sobre tu proyecto y me pondré en contacto contigo en las próximas 24 horas para discutir los detalles y brindarte una cotización personalizada.</p>
+            <div class="success-details">
+                <p><strong>¿Qué sigue ahora?</strong></p>
+                <ul>
+                    <li>📧 Recibirás un email de confirmación</li>
+                    <li>📞 Te contactaré para una consulta inicial</li>
+                    <li>💼 Discutiremos tu proyecto en detalle</li>
+                    <li>📋 Te enviaré una propuesta personalizada</li>
+                </ul>
+            </div>
+            <div class="success-actions">
+                <a href="#inicio" class="btn primary-btn">Volver al inicio</a>
+                <a href="#contacto" class="btn secondary-btn">Información de contacto</a>
+            </div>
+        `;
         
         // Scroll hacia el mensaje
         smoothScrollTo(successMessage, 100);

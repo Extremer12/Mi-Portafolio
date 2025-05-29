@@ -806,6 +806,69 @@ section {
     border: none;
 }
 
+/* Estilos adicionales para el formulario mejorado */
+.form-group input[type="tel"] {
+    font-family: monospace;
+}
+
+.checkbox-label {
+    align-items: flex-start !important;
+    margin-top: 1rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-top: 0.2rem;
+    min-width: 16px;
+    max-width: 16px;
+}
+
+.success-details {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.success-details ul {
+    list-style: none;
+    margin-top: 1rem;
+}
+
+.success-details li {
+    padding: 0.5rem 0;
+    color: var(--text-secondary);
+}
+
+.success-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Animación para el spinner del botón */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Portfolio - RESPONSIVE */
 .portfolio-filter {
     display: flex;
@@ -1897,5 +1960,18 @@ a:focus {
     
     .about-text {
         padding: 0 0.5rem;
+    }
+}
+
+/* Responsive para success message */
+@media (max-width: 768px) {
+    .success-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .success-actions .btn {
+        width: 100%;
+        max-width: 280px;
     }
 }
