@@ -1027,9 +1027,10 @@ body.dark-mode .service-btn:focus {
     border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
     background: var(--bg-primary);
-    color: var (--text-primary);
+    color: var(--text-primary);
     font-size: clamp(0.9rem, 2.5vw, 1rem);
     transition: var(--transition);
+    font-family: inherit;
 }
 
 .form-group input:focus,
@@ -1044,11 +1045,144 @@ body.dark-mode .service-btn:focus {
     border-color: var(--danger-color);
 }
 
-.error-message {
-    color: var(--danger-color);
-    font-size: clamp(0.8rem, 2vw, 0.875rem);
-    margin-top: 0.25rem;
-    display: block;
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+/* MODO OSCURO - INPUTS MEJORADOS */
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+    background: #2d3748; /* Fondo más claro que el actual */
+    border-color: #4a5568; /* Borde más visible */
+    color: #e2e8f0; /* Texto blanco/gris claro */
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+    background: #374151; /* Fondo ligeramente más claro al hacer focus */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+    color: #ffffff; /* Texto completamente blanco al hacer focus */
+}
+
+body.dark-mode .form-group input::placeholder,
+body.dark-mode .form-group textarea::placeholder {
+    color: #9ca3af; /* Placeholder gris claro */
+    opacity: 1;
+}
+
+/* Select específico para modo oscuro */
+body.dark-mode .form-group select {
+    background: #2d3748;
+    color: #e2e8f0;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+body.dark-mode .form-group select:focus {
+    background: #374151;
+    color: #ffffff;
+}
+
+/* Opciones del select en modo oscuro */
+body.dark-mode .form-group select option {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 0.5rem;
+}
+
+/* Labels en modo oscuro */
+body.dark-mode .form-group label {
+    color: #f7fafc; /* Blanco más puro para labels */
+}
+
+/* Radio buttons y checkboxes en modo oscuro */
+body.dark-mode .radio-label,
+body.dark-mode .checkbox-label {
+    color: #e2e8f0;
+}
+
+body.dark-mode .radio-label input[type="radio"],
+body.dark-mode .checkbox-label input[type="checkbox"] {
+    background: #2d3748;
+    border-color: #4a5568;
+    accent-color: var(--primary-color);
+}
+
+body.dark-mode .radio-label input[type="radio"]:checked,
+body.dark-mode .checkbox-label input[type="checkbox"]:checked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Mensajes de error en modo oscuro */
+body.dark-mode .error-message {
+    color: #fc8181; /* Rojo más claro para mejor visibilidad */
+}
+
+/* Input con error en modo oscuro */
+body.dark-mode .form-group input.error {
+    border-color: #fc8181;
+    background: #2d1b1b; /* Fondo rojizo sutil */
+}
+
+/* Textarea específico */
+body.dark-mode .form-group textarea {
+    background: #2d3748;
+    color: #e2e8f0;
+    resize: vertical;
+}
+
+body.dark-mode .form-group textarea:focus {
+    background: #374151;
+    color: #ffffff;
+}
+
+/* Input de fecha específico */
+body.dark-mode .form-group input[type="date"] {
+    background: #2d3748;
+    color: #e2e8f0;
+    color-scheme: dark; /* Esto hace que el calendario sea oscuro también */
+}
+
+body.dark-mode .form-group input[type="date"]:focus {
+    background: #374151;
+    color: #ffffff;
+}
+
+/* Input de teléfono */
+body.dark-mode .form-group input[type="tel"] {
+    background: #2d3748;
+    color: #e2e8f0;
+    font-family: monospace;
+}
+
+body.dark-mode .form-group input[type="tel"]:focus {
+    background: #374151;
+    color: #ffffff;
+}
+
+/* Asegurar que los autofill también se vean bien en modo oscuro */
+body.dark-mode input:-webkit-autofill,
+body.dark-mode input:-webkit-autofill:hover,
+body.dark-mode input:-webkit-autofill:focus,
+body.dark-mode select:-webkit-autofill,
+body.dark-mode textarea:-webkit-autofill {
+    -webkit-text-fill-color: #e2e8f0;
+    -webkit-box-shadow: 0 0 0px 1000px #2d3748 inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+body.dark-mode input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff;
+    -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
 }
 
 .radio-group,
@@ -1155,6 +1289,63 @@ body.dark-mode .service-btn:focus {
 .form-step:not([style*="display: none"]) {
     opacity: 1;
     transform: translateX(0);
+}
+
+/* Animaciones suaves para los inputs */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effect para inputs */
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .form-group input:hover,
+body.dark-mode .form-group select:hover,
+body.dark-mode .form-group textarea:hover {
+    border-color: var(--primary-color);
+    background: #374151;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Estados de validación mejorados */
+.form-group input:valid {
+    border-color: var(--success-color);
+}
+
+.form-group input:invalid:not(:placeholder-shown) {
+    border-color: var(--danger-color);
+}
+
+body.dark-mode .form-group input:valid {
+    border-color: #68d391; /* Verde más claro */
+}
+
+body.dark-mode .form-group input:invalid:not(:placeholder-shown) {
+    border-color: #fc8181; /* Rojo más claro */
+}
+
+/* Mejorar la legibilidad de los disabled inputs */
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+body.dark-mode .form-group input:disabled,
+body.dark-mode .form-group select:disabled,
+body.dark-mode .form-group textarea:disabled {
+    background: #1a202c;
+    color: #718096;
+    border-color: #2d3748;
 }
 
 /* =================================================================
