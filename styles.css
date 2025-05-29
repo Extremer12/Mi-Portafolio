@@ -1705,35 +1705,36 @@ body.dark-mode .service-btn:focus {
         font-size: clamp(0.7rem, 2vw, 0.9rem);
     }
     
-    /* HERO - CENTRADO CORRECTO */
+    /* HERO - CENTRADO PERFECTO CORREGIDO */
     .hero {
         flex-direction: column;
         text-align: center;
-        padding: calc(75px + 2rem) 1rem 2rem; /* Padding normal, sin trucos raros */
+        padding: calc(75px + 2rem) 0 2rem; /* Sin padding lateral para centrado completo */
         gap: 2rem;
         min-height: 100vh;
         justify-content: center;
         align-items: center;
         width: 100%;
         max-width: 100%;
-        margin: 0 auto; /* Centrado normal */
-        /* ELIMINAR estas líneas problemáticas: */
-        /* left: 50%; */
-        /* right: 50%; */
-        /* margin-left: -50vw; */
-        /* margin-right: -50vw; */
+        margin: 0 auto;
+        /* Centrado perfecto del contenedor completo */
+        display: flex;
     }
     
     .hero-content {
         width: 100%;
-        max-width: 100%;
-        padding: 0;
-        margin: 0 auto;
+        max-width: 90%; /* Limitar ancho para centrado */
+        padding: 0 1rem; /* Padding simétrico */
+        margin: 0 auto; /* Centrado horizontal */
         text-align: center;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        /* Forzar centrado del contenido */
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
     }
     
     .hero-content h1 {
@@ -1742,6 +1743,10 @@ body.dark-mode .service-btn:focus {
         margin-bottom: 1.2rem;
         text-align: center;
         width: 100%;
+        /* Centrado perfecto del h1 */
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0;
     }
     
     .hero-content p {
@@ -1750,6 +1755,10 @@ body.dark-mode .service-btn:focus {
         line-height: 1.6;
         text-align: center;
         width: 100%;
+        /* Centrado perfecto del párrafo */
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0;
     }
     
     .cta-buttons {
@@ -1760,11 +1769,13 @@ body.dark-mode .service-btn:focus {
         gap: 1rem;
         margin: 0 auto;
         padding: 0;
+        /* Centrado perfecto de los botones */
+        display: flex;
     }
     
     .btn {
         width: 100%;
-        max-width: 300px;
+        max-width: 280px; /* Ancho fijo para centrado */
         padding: clamp(0.8rem, 3vw, 1rem) clamp(1.2rem, 4vw, 1.8rem);
         font-size: clamp(0.9rem, 2.8vw, 1rem);
         margin: 0 auto;
@@ -1772,19 +1783,23 @@ body.dark-mode .service-btn:focus {
         text-align: center;
     }
     
-    /* HERO IMAGE - CENTRADO CORRECTO */
+    /* HERO IMAGE - CENTRADO HACIA LA IZQUIERDA */
     .hero-image {
         width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 0;
+        max-width: 90%; /* Mismo ancho que hero-content */
+        margin: 1rem auto 0;
+        padding: 0 1rem; /* Mismo padding que hero-content */
         display: flex;
         justify-content: center;
         align-items: center;
+        /* Mover ligeramente hacia la izquierda para equilibrar */
+        position: relative;
+        left: 50%;
+        transform: translateX(-55%); /* 5% más hacia la izquierda */
     }
     
     .code-editor {
-        max-width: 95%;
+        max-width: 100%;
         width: 100%;
         margin: 0 auto;
     }
@@ -1837,19 +1852,17 @@ body.dark-mode .service-btn:focus {
 
 @media (max-width: 430px) {
     .hero {
-        padding: calc(70px + 1.0rem) 1rem 1.5rem; /* Padding normal */
-        /* ELIMINAR estas líneas: */
-        /* width: 100vw; */
-        /* left: 50%; */
-        /* right: 50%; */
-        /* margin-left: -50vw; */
-        /* margin-right: -50vw; */
+        padding: calc(70px + 1.5rem) 0 1.5rem; /* Sin padding lateral */
     }
     
     .hero-content {
-        max-width: 100%;
-        padding: 0;
+        max-width: 85%; /* Ancho específico para iPhone 14 */
+        padding: 0 1rem;
         width: 100%;
+        /* Centrado específico para iPhone 14 */
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
     }
     
     .hero-content h1 {
@@ -1858,6 +1871,8 @@ body.dark-mode .service-btn:focus {
         margin-bottom: 1rem;
         text-align: center;
         width: 100%;
+        margin-left: 0px;
+        margin-right: 360px;
     }
     
     .hero-content p {
@@ -1865,24 +1880,32 @@ body.dark-mode .service-btn:focus {
         margin-bottom: 1.5rem;
         text-align: center;
         width: 100%;
+        margin-left: 0px;
+        margin-right: 360px;
     }
     
     .btn {
-        max-width: 280px;
+        max-width: 260px; /* Más pequeño para iPhone 14 */
         padding: 0.8rem 1.5rem;
         font-size: 0.95rem;
-        margin: 0 auto;
+        margin-left: 0px;
+        margin-right: 360px; 
     }
     
     .hero-image {
-        max-width: 100%;
-        padding: 0;
-        margin: 0 auto;
+        max-width: 85%; /* Mismo ancho que hero-content */
+        padding: 0 1rem;
+        margin-left: 0px;
+        margin-right: 460px; 
+        /* Ajuste específico para iPhone 14 */
+        position: relative;
+        left: 50%;
+        transform: translateX(-52%); /* Ligeramente más hacia la izquierda */
     }
     
     .code-editor {
         width: 100%;
-        max-width: 90%;
+        max-width: 95%;
     }
     
     .profile-image {
@@ -1891,30 +1914,30 @@ body.dark-mode .service-btn:focus {
     }
 }
 
+/* ESPECÍFICO PARA PANTALLAS MUY PEQUEÑAS (320px) */
 @media (max-width: 320px) {
     .hero {
-        padding: calc(70px + 1rem) 1rem 1rem; /* Padding normal */
-        /* ELIMINAR estas líneas problemáticas: */
-        /* width: 100vw; */
-        /* left: 50%; */
-        /* right: 50%; */
-        /* margin-left: -50vw; */
-        /* margin-right: -50vw; */
+        padding: calc(70px + 1rem) 0 1rem;
     }
     
     .hero-content {
-        max-width: 100%;
-        padding: 0;
-        width: 100%;
+        max-width: 90%;
+        padding: 0 0.5rem;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
     }
     
     .hero-image {
-        max-width: 100%;
-        padding: 0;
+        max-width: 90%;
+        padding: 0 0.5rem;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
     }
     
     .btn {
-        max-width: 250px;
+        max-width: 240px;
     }
 }
 
